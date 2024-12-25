@@ -3,10 +3,13 @@ import React, {useEffect} from 'react';
 import RootStack from './src/navigation/RootStack';
 import {NavigationContainer} from '@react-navigation/native';
 import BootSplash from 'react-native-bootsplash';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {SafeAreaProvider, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {navigationRef} from './src/utils/navigation';
+import Toast from 'react-native-toast-message';
+import { toastConfig } from './src/utils/theme';
 
 const App = () => {
+  // const {bottom}=useSafeAreaInsets()
   useEffect(() => {
     const init = async () => {
       // …do multiple sync or async tasks
@@ -20,10 +23,11 @@ const App = () => {
 
   return (
     <SafeAreaProvider style={{flex: 1}}>
-      <StatusBar barStyle={'dark-content'} backgroundColor={'white'} />
+      <StatusBar backgroundColor={'white'} barStyle={'dark-content'}/>
       <NavigationContainer ref={navigationRef}>
         <RootStack />
       </NavigationContainer>
+      <Toast config={toastConfig(100)}/>
     </SafeAreaProvider>
   );
 };

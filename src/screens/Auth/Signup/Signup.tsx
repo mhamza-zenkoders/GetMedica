@@ -17,6 +17,7 @@ import { RootStackNavigationType } from '../../../utils/types/navigationType';
 import CustomRHFDropDown from '../../../components/common/CustomRHFDropDown/CustomRHFDropDown';
 import { TYPEOFSPECIALIZATION } from '../../../utils/constants';
 import { RFValue } from 'react-native-responsive-fontsize';
+import { signupMutation } from '../../../services/auth';
 
 const Signup = () => {
   const {control, handleSubmit} = useForm({
@@ -24,6 +25,12 @@ const Signup = () => {
   });
   const {params} = useRoute<RouteProp<RootStackNavigationType, 'Login'>>();
   
+  const SignupHandler = async (data:any)=>{
+    data.role = params?.role,
+    console.log('SignupHandlerData', data)
+    signupMutation(data);
+  }
+
   return (
     <CustomWrapper>
       <SimpleHeader>
@@ -39,7 +46,7 @@ const Signup = () => {
               textStyle={styles.title}
             />
             <CustomRHFTextInput
-              placeholder="Name"
+              placeholder="Enter Name"
               requiredStar
               control={control}
               rules={{
@@ -63,7 +70,7 @@ const Signup = () => {
               title="Email"
             />
             {params?.role == 'doctor' ? (<CustomRHFDropDown
-              name="typeOfPractice"
+              name="specialization"
               label="Specialization"
               required
               onChangeValue={() => {
@@ -79,6 +86,7 @@ const Signup = () => {
               secureTextEntry
               placeholder="Enter Password"
               requiredStar
+              rules={{required: 'Password is required'}}
               control={control}
               name="password"
               title="Password"
@@ -88,7 +96,7 @@ const Signup = () => {
             <CustomButton
               // loading={}
               title={'Continue'}
-              onPress={() => {}}
+              onPress={handleSubmit(SignupHandler)}
             />
             <CustomText
               center
@@ -105,7 +113,7 @@ const Signup = () => {
                     fontSize="S14"
                     color={COLORS.primary}
                     children={' Log in'}
-                    onPress={() => {}}
+                    onPress={() => navigate('Login', {role: params?.role})}
                   />
                 </>
               }

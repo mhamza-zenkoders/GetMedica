@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "182641407249",
+    "project_id": "get-medica",
+    "storage_bucket": "get-medica.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:182641407249:android:6ada9632203869e15288b0",
+        "android_client_info": {
+          "package_name": "com.getmedica"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHP20qJAO1CcrMQ0iLVxKK4cMF34yQ0QM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
