@@ -19,7 +19,7 @@ const SelectRole = ({navigation}: any) => {
   return (
     <CustomWrapper>
     <View style={styles.container}>
-      <SimpleHeader>
+      
 
       
       <CustomText
@@ -47,7 +47,6 @@ const SelectRole = ({navigation}: any) => {
           selectedItem={title == 'patient'}
           onPress={text => setTitle(text)}
         />
-        </SimpleHeader>
     </View>
     <CustomButton
         title={'Continue'}

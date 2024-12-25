@@ -8,10 +8,12 @@ import {
 export type RootStackNavigationType = {
   SelectRole: undefined;
   Login: {role: RoleType};
+  Signup: {role: RoleType};
+
   // ForgotPassword: undefined;
   // SetNewPassword: undefined;
   // VerifyOtp: {screenType: ScreenType; role: RoleType; email: string};
-  // Signup: {role: RoleType};
+  
   // CompleteProfileMultiStep: undefined;
   // JobDetails: {id: number; jobType?: 'notApplied' | undefined};
   // NurseVetBottomTab: {};

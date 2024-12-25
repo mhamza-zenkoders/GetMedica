@@ -6,8 +6,7 @@ import {
   heightPercentageToDP,
   widthPercentageToDP,
 } from 'react-native-responsive-screen';
-import {COLORS} from '../../utils/theme';
-import {useNavigation} from '@react-navigation/native';
+import {COLORS, IMAGES} from '../../utils/theme';
 
 import LoadingFullScreen from './components/LoadingFullScreen';
 import ErrorFullScreen from './components/ErrorFullScreen';
@@ -16,20 +15,28 @@ import {CustomText} from '../common/CustomText';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {navigateGoBack} from '../../utils/navigation';
 import {RFValue} from 'react-native-responsive-fontsize';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import CustomImage from '../common/CustomImage';
+import {DEFAULT_IMAGE_URL} from '../../utils/constants';
 type Props = {
+  name?: string;
+  profilePic?: string;
   children: ReactNode;
   onPressBack?: () => void;
   containerStyle?: ViewStyle;
   loading?: boolean;
   error?: boolean;
 };
-const SimpleHeader: FC<Props> = ({
+const DesignHeader: FC<Props> = ({
+  name,
+  profilePic,
   children,
   onPressBack,
   containerStyle,
   loading,
   error,
 }) => {
+  const {top} = useSafeAreaInsets();
   const renderContent = () => {
     if (loading) return <LoadingFullScreen />;
     if (error) return <ErrorFullScreen />;
@@ -37,28 +44,33 @@ const SimpleHeader: FC<Props> = ({
   };
   return (
     <View style={styles.container}>
-      
-      <View style={styles.headerContainer}>
+      <StatusBar barStyle={'light-content'} />
+      <View style={[styles.headerContainer, {paddingTop: top}]}>
         <CustomIcon
-          style={styles.iconContainer}
+          style={styles.icon}
           onPress={() => {
             if (onPressBack) {
               return onPressBack();
             }
             navigateGoBack();
           }}
-          size={RFValue(24)}
-          type={'AntDesign'}
-          icon={"arrowleft"}
-        />
-
-        {/* <CustomIcon
-          size={heightPercentageToDP(3)}
+          color={COLORS.NeutralGrey20}
+          size={RFValue(18)}
           type={'AntDesign'}
           icon="arrowleft"
-          // color={COLORS.white}
-        /> */}
+        />
       </View>
+      {(profilePic || name) && (
+        <View style={styles.imageContainer}>
+          <CustomImage
+            source={{uri: profilePic}}
+            loading={loading}
+            style={styles.image}
+          />
+          <CustomText children={name} fontWeight="600" fontSize="S14" />
+        </View>
+      )}
+
       <View style={[styles.mainContainer, containerStyle]}>
         {renderContent()}
       </View>
@@ -66,33 +78,43 @@ const SimpleHeader: FC<Props> = ({
   );
 };
 
-export default SimpleHeader;
+export default DesignHeader;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+
     // flexDirection: 'row',
   },
   headerContainer: {
-    alignItems: 'center',
-    flexDirection: 'row',
+    backgroundColor: COLORS.primary,
+    height: heightPercentageToDP(18),
     paddingVertical: heightPercentageToDP(1),
     paddingHorizontal: widthPercentageToDP(5),
   },
-  iconContainer: {
+  icon: {
     borderWidth: RFValue(1),
     borderColor: COLORS.NeutralGrey20,
     borderRadius: 100,
     padding: RFValue(4),
+    alignSelf: 'flex-start',
   },
-  textStyle: {
-    // backgroundColor: 'red',
-    flex: 1,
+
+  imageContainer: {
+    marginTop: -heightPercentageToDP(5),
+    alignSelf: 'center',
+    gap: heightPercentageToDP(0.5),
+    alignItems: 'center',
+  },
+  image: {
+    height: heightPercentageToDP(10),
+    borderRadius: 100,
+    aspectRatio: 1,
   },
   mainContainer: {
     flex: 1,
+
     paddingHorizontal: widthPercentageToDP(5),
-    paddingBottom: heightPercentageToDP(1),
-    // backgroundColor: 'red',
+    // paddingVertical: heightPercentageToDP(1),
   },
 });

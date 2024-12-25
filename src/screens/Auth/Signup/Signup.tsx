@@ -12,15 +12,18 @@ import {
   heightPercentageToDP,
   widthPercentageToDP,
 } from 'react-native-responsive-screen';
-import {useRoute, RouteProp} from '@react-navigation/native';
-import {RootStackNavigationType} from '../../../utils/types/navigationType';
+import { useRoute, RouteProp } from '@react-navigation/native';
+import { RootStackNavigationType } from '../../../utils/types/navigationType';
+import CustomRHFDropDown from '../../../components/common/CustomRHFDropDown/CustomRHFDropDown';
+import { TYPEOFSPECIALIZATION } from '../../../utils/constants';
+import { RFValue } from 'react-native-responsive-fontsize';
 
-const Login = () => {
+const Signup = () => {
   const {control, handleSubmit} = useForm({
     // defaultValues: {email: 'hhhh@yopmail.com', password: 'Karachi123+'},
   });
   const {params} = useRoute<RouteProp<RootStackNavigationType, 'Login'>>();
-
+  
   return (
     <CustomWrapper>
       <SimpleHeader>
@@ -31,11 +34,20 @@ const Login = () => {
             <CustomText
               fontWeight="600"
               fontSize="S28"
-              children={'Login'}
+              children={'Sign Up'}
               color={COLORS.NeutralGrey100}
               textStyle={styles.title}
             />
-
+            <CustomRHFTextInput
+              placeholder="Name"
+              requiredStar
+              control={control}
+              rules={{
+                required: 'Name is Required',
+              }}
+              name="name"
+              title="Name"
+            />
             <CustomRHFTextInput
               placeholder="Enter Email Address"
               requiredStar
@@ -50,6 +62,18 @@ const Login = () => {
               name="email"
               title="Email"
             />
+            {params?.role == 'doctor' ? (<CustomRHFDropDown
+              name="typeOfPractice"
+              label="Specialization"
+              required
+              onChangeValue={() => {
+                // setValue('fieldOfPractice', null);
+                // setValue('typeOfPractice');
+              }}
+              control={control}
+              rules={{required: 'Type of Practice is required'}}
+              data={TYPEOFSPECIALIZATION}
+            />):(<></>)}
             
             <CustomRHFTextInput
               secureTextEntry
@@ -58,15 +82,6 @@ const Login = () => {
               control={control}
               name="password"
               title="Password"
-            />
-            <CustomText
-              underline
-              textStyle={{textAlign: 'right'}}
-              onPress={() => {}}
-              fontWeight="600"
-              fontSize="S13"
-              children="Forgot Password?"
-              color={COLORS.primary}
             />
           </View>
           <View>
@@ -83,14 +98,14 @@ const Login = () => {
               textStyle={styles.subtitleText}
               children={
                 <>
-                  Don't have an account?
+                  Already have an account?
                   <CustomText
                     underline
                     fontWeight="600"
                     fontSize="S14"
                     color={COLORS.primary}
-                    children={' Sign Up'}
-                    onPress={() => navigate('Signup', {role: params?.role})}
+                    children={' Log in'}
+                    onPress={() => {}}
                   />
                 </>
               }
@@ -102,20 +117,24 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;
 
 const styles = StyleSheet.create({
   container: {
-    gap: heightPercentageToDP(1),
+    gap:heightPercentageToDP(1),
     flex: 1,
   },
   title: {
-    marginBottom: heightPercentageToDP(1.5),
+    marginBottom:heightPercentageToDP(1.5),
   },
-  subtitleText: {
-    marginVertical: heightPercentageToDP(1.5),
+  subtitleText:{
+    marginVertical:heightPercentageToDP(1.5),
   },
-  highlightedSubtitleText: {
+  highlightedSubtitleText:{
     paddingHorizontal: 40,
   },
+
+  titleTextStyle:{
+    fontSize: RFValue(13)
+  }
 });
