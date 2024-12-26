@@ -4,7 +4,6 @@ import {MutableRefObject} from 'react';
 import {Day, WeeklySchedule} from './types/componentType';
 import {Timing} from './types/apiResponseType';
 import {TYPEOFSPECIALIZATION} from './constants';
-// import {G} from 'react-native-svg';
 
 export const showToast = ({
   type,

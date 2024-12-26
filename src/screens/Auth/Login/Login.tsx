@@ -14,7 +14,7 @@ import {
 } from 'react-native-responsive-screen';
 import {useRoute, RouteProp} from '@react-navigation/native';
 import {RootStackNavigationType} from '../../../utils/types/navigationType';
-import { logInMutation } from '../../../services/auth';
+import {logInMutation} from '../../../services/auth';
 
 const Login = () => {
   const {control, handleSubmit} = useForm({
@@ -22,11 +22,11 @@ const Login = () => {
   });
   const {params} = useRoute<RouteProp<RootStackNavigationType, 'Login'>>();
 
-  const LoginHandler = async (data:any)=>{
-    data.role = params?.role
-    console.log('Login Handler Data', data)
+  const LoginHandler = async (data: any) => {
+    data.role = params?.role;
+    console.log('Login Handler Data', data);
     logInMutation(data);
-  }
+  };
 
   return (
     <CustomWrapper>
@@ -57,7 +57,7 @@ const Login = () => {
               name="email"
               title="Email"
             />
-            
+
             <CustomRHFTextInput
               secureTextEntry
               placeholder="Enter Password"

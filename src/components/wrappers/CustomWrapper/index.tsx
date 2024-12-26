@@ -87,7 +87,9 @@ export default CustomWrapper;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 2,
     backgroundColor: 'white',
+    paddingLeft:widthPercentageToDP(5),
+    paddingRight:widthPercentageToDP(5)
   },
 });

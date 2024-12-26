@@ -40,6 +40,7 @@ export const COLORS = {
 export const IMAGES = {
   doctor: require('../assets/pictures/doctor.png'),
   patient: require('../assets/pictures/patient.png'),
+  userProfile: require('../assets/pictures/user.png'),
 
   sandTimeLottie: require('../assets/lottieFiles/sandTime.json'),
   loadingLottie: require('../assets/lottieFiles/loading.json'),

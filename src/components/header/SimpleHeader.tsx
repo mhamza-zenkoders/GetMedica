@@ -37,7 +37,6 @@ const SimpleHeader: FC<Props> = ({
   };
   return (
     <View style={styles.container}>
-      
       <View style={styles.headerContainer}>
         <CustomIcon
           style={styles.iconContainer}
@@ -49,7 +48,7 @@ const SimpleHeader: FC<Props> = ({
           }}
           size={RFValue(24)}
           type={'AntDesign'}
-          icon={"arrowleft"}
+          icon={'arrowleft'}
         />
 
         {/* <CustomIcon
@@ -71,13 +70,12 @@ export default SimpleHeader;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // flexDirection: 'row',
   },
   headerContainer: {
     alignItems: 'center',
     flexDirection: 'row',
     paddingVertical: heightPercentageToDP(1),
-    paddingHorizontal: widthPercentageToDP(5),
+    // paddingHorizontal: widthPercentageToDP(5),
   },
   iconContainer: {
     borderWidth: RFValue(1),
@@ -91,7 +89,7 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     flex: 1,
-    paddingHorizontal: widthPercentageToDP(5),
+    // paddingHorizontal: widthPercentageToDP(5),
     paddingBottom: heightPercentageToDP(1),
     // backgroundColor: 'red',
   },

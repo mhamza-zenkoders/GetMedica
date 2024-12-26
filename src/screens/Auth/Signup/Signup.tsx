@@ -12,24 +12,23 @@ import {
   heightPercentageToDP,
   widthPercentageToDP,
 } from 'react-native-responsive-screen';
-import { useRoute, RouteProp } from '@react-navigation/native';
-import { RootStackNavigationType } from '../../../utils/types/navigationType';
+import {useRoute, RouteProp} from '@react-navigation/native';
+import {RootStackNavigationType} from '../../../utils/types/navigationType';
 import CustomRHFDropDown from '../../../components/common/CustomRHFDropDown/CustomRHFDropDown';
-import { TYPEOFSPECIALIZATION } from '../../../utils/constants';
-import { RFValue } from 'react-native-responsive-fontsize';
-import { signupMutation } from '../../../services/auth';
+import {TYPEOFSPECIALIZATION} from '../../../utils/constants';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {signupMutation} from '../../../services/auth';
 
 const Signup = () => {
   const {control, handleSubmit} = useForm({
     // defaultValues: {email: 'hhhh@yopmail.com', password: 'Karachi123+'},
   });
   const {params} = useRoute<RouteProp<RootStackNavigationType, 'Login'>>();
-  
-  const SignupHandler = async (data:any)=>{
-    data.role = params?.role,
-    console.log('SignupHandlerData', data)
+
+  const SignupHandler = async (data: any) => {
+    (data.role = params?.role), console.log('SignupHandlerData', data);
     signupMutation(data);
-  }
+  };
 
   return (
     <CustomWrapper>
@@ -69,19 +68,23 @@ const Signup = () => {
               name="email"
               title="Email"
             />
-            {params?.role == 'doctor' ? (<CustomRHFDropDown
-              name="specialization"
-              label="Specialization"
-              required
-              onChangeValue={() => {
-                // setValue('fieldOfPractice', null);
-                // setValue('typeOfPractice');
-              }}
-              control={control}
-              rules={{required: 'Type of Practice is required'}}
-              data={TYPEOFSPECIALIZATION}
-            />):(<></>)}
-            
+            {params?.role == 'doctor' ? (
+              <CustomRHFDropDown
+                name="specialization"
+                label="Specialization"
+                required
+                onChangeValue={() => {
+                  // setValue('fieldOfPractice', null);
+                  // setValue('typeOfPractice');
+                }}
+                control={control}
+                rules={{required: 'Type of Practice is required'}}
+                data={TYPEOFSPECIALIZATION}
+              />
+            ) : (
+              <></>
+            )}
+
             <CustomRHFTextInput
               secureTextEntry
               placeholder="Enter Password"
@@ -129,20 +132,20 @@ export default Signup;
 
 const styles = StyleSheet.create({
   container: {
-    gap:heightPercentageToDP(1),
+    gap: heightPercentageToDP(1),
     flex: 1,
   },
   title: {
-    marginBottom:heightPercentageToDP(1.5),
+    marginBottom: heightPercentageToDP(1.5),
   },
-  subtitleText:{
-    marginVertical:heightPercentageToDP(1.5),
+  subtitleText: {
+    marginVertical: heightPercentageToDP(1.5),
   },
-  highlightedSubtitleText:{
+  highlightedSubtitleText: {
     paddingHorizontal: 40,
   },
 
-  titleTextStyle:{
-    fontSize: RFValue(13)
-  }
+  titleTextStyle: {
+    fontSize: RFValue(13),
+  },
 });
