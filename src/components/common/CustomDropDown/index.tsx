@@ -90,7 +90,7 @@ const CustomDropDown: FC<Props> = ({
         }}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
-        onChange={item => {
+        onChange={(item:{value: string; label: string}) => {
           onChangeItem(item);
 
           setIsFocus(false);

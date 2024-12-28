@@ -20,6 +20,7 @@ type CustomHeaderProps = {
   iconType?: string;
   onPressBack?: () => void;
   containerStyle?: ViewStyle;
+  iconPress? :() => void;
 };
 
 const CustomHeader: React.FC<CustomHeaderProps> = ({
@@ -30,6 +31,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
   iconType,
   onPressBack,
   containerStyle,
+  iconPress
 }) => {
   const {top} = useSafeAreaInsets();
 
@@ -75,10 +77,10 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
         {icon && (
           <CustomIcon
             style={styles.bellIcon}
-            onPress={() => {}}
+            onPress={iconPress}
             color={COLORS.white}
-            size={RFValue(25)}
-            type={'Ionicons'}
+            size={RFValue(20)}
+            type={'AntDesign'}
             icon={icon}
           />
         )}
@@ -100,7 +102,7 @@ const styles = StyleSheet.create({
 
   bellIcon: {
     borderRadius: 100,
-    padding: RFValue(7),
+    padding: RFValue(8),
     justifyContent: 'center',
     backgroundColor: COLORS.primary,
   },

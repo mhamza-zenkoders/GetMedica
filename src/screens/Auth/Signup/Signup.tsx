@@ -7,7 +7,7 @@ import {COLORS} from '../../../utils/theme';
 import {CustomButton} from '../../../components/common/CustomButton';
 import {useForm} from 'react-hook-form';
 import CustomRHFTextInput from '../../../components/common/CustomRHFTextInput';
-import {navigate} from '../../../utils/navigation';
+import {navigate, navigateReset} from '../../../utils/navigation';
 import {
   heightPercentageToDP,
   widthPercentageToDP,
@@ -18,6 +18,8 @@ import CustomRHFDropDown from '../../../components/common/CustomRHFDropDown/Cust
 import {TYPEOFSPECIALIZATION} from '../../../utils/constants';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {signupMutation} from '../../../services/auth';
+import {showToast} from '../../../utils/helpers';
+import { useUserStore } from '../../../store/userStore';
 
 const Signup = () => {
   const {control, handleSubmit} = useForm({
@@ -26,8 +28,32 @@ const Signup = () => {
   const {params} = useRoute<RouteProp<RootStackNavigationType, 'Login'>>();
 
   const SignupHandler = async (data: any) => {
-    (data.role = params?.role), console.log('SignupHandlerData', data);
-    signupMutation(data);
+    console.log(data);
+    data.role = params?.role;
+    const res = await signupMutation(data);
+    console.log(res);
+    if (!res.success) {
+      showToast({
+        type: 'error',
+        message: res.error,
+        position: 'bottom',
+      });
+      return;
+    }
+    showToast({message: 'User created successfully!', position: 'bottom'});
+    const setUser = useUserStore.getState().setUser;
+    setUser({
+      uid: res.uid,
+      email: data?.email,
+      name: data?.name,
+      role: data?.role,
+      ...(data.role === 'doctor' && {
+        specialization: data?.specialization.value,
+      }),
+    });
+    return data.role == 'doctor'
+      ? navigateReset('DoctorNavigator')
+      : navigateReset('PatientNavigator');
   };
 
   return (

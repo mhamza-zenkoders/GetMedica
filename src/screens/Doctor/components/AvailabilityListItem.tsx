@@ -82,7 +82,6 @@ const AvailabilityListItem: FC<Props> = ({
           })(),
         },
       ];
-      console.log(availabilityRef.current);
     }
   };
   const onTimeConfirm = (
@@ -91,8 +90,6 @@ const AvailabilityListItem: FC<Props> = ({
     type: 'startTime' | 'endTime',
   ) => {
     if (type == 'startTime') {
-      Alert.alert("ssss",index.toString())
-
       // Start Time Setting State and Ref
       timingArray[index].startTime = item;
       setTimingArray([...timingArray]);
@@ -108,7 +105,6 @@ const AvailabilityListItem: FC<Props> = ({
           endTime: undefined,
         },
       ];
-      console.log(availabilityRef,"AVVVVVVVVV")
     } else if (type == 'endTime') {
       //end Time Setting State and Ref
 
@@ -127,8 +123,6 @@ const AvailabilityListItem: FC<Props> = ({
       ];
     }
   };
-  console.log(timingArray, 'timmingArr');
-  console.log(availabilityRef.current, 'ava');
   return (
     <View style={styles.container}>
       {/* {selectedItem && (

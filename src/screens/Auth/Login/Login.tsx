@@ -7,14 +7,17 @@ import {COLORS} from '../../../utils/theme';
 import {CustomButton} from '../../../components/common/CustomButton';
 import {useForm} from 'react-hook-form';
 import CustomRHFTextInput from '../../../components/common/CustomRHFTextInput';
-import {navigate} from '../../../utils/navigation';
+import {navigate, navigateReset} from '../../../utils/navigation';
 import {
   heightPercentageToDP,
   widthPercentageToDP,
 } from 'react-native-responsive-screen';
 import {useRoute, RouteProp} from '@react-navigation/native';
 import {RootStackNavigationType} from '../../../utils/types/navigationType';
-import {logInMutation} from '../../../services/auth';
+import {loginMutation} from '../../../services/auth';
+import { showToast } from '../../../utils/helpers';
+import { useUserStore } from '../../../store/userStore';
+import { getTimeSchedule } from '../../../services/doctor';
 
 const Login = () => {
   const {control, handleSubmit} = useForm({
@@ -24,8 +27,34 @@ const Login = () => {
 
   const LoginHandler = async (data: any) => {
     data.role = params?.role;
-    console.log('Login Handler Data', data);
-    logInMutation(data);
+    const res = await loginMutation(data);
+    if (!res?.success) {
+      showToast({
+        type: 'error',
+        message: res.error.message,
+        position: 'bottom',
+      });
+      return;
+    }
+    const res1 = await getTimeSchedule(
+      res.id!,
+      res.user?.currentTime,
+    );
+    const setUser = useUserStore.getState().setUser;
+    setUser({
+      uid: res.id,
+      email: res.user?.email,
+      name: res.user?.name,
+      role: res.user?.role,
+      ...(data.role === 'doctor' && {
+        specialization: res.user?.specialization,
+        availability: res1.availability?.timings,
+      }),
+    });
+    showToast({message: 'User logged in successfully!', position: 'bottom'});
+    return data.role == 'doctor'
+      ? navigateReset('DoctorNavigator')
+      : navigateReset('PatientNavigator');
   };
 
   return (
@@ -126,3 +155,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
   },
 });
+function getTimeScheduleFromFirebase(arg0: any, currentTime: any) {
+  throw new Error('Function not implemented.');
+}
+

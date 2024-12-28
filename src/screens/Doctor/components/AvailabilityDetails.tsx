@@ -17,9 +17,11 @@ const AvailabilityDetails: FC<{
 }> = ({availabilityRef}) => {
   const {user} = useUserStore();
   const userAvailabilityDetails = transformAvailabilityDataToWeeklySchedule(
-    user.timings || [],
+    user.availability || [],
   );
-  console.log(userAvailabilityDetails);
+  console.log('userava',userAvailabilityDetails);
+  console.log('user ref',availabilityRef);
+  
   return (
     <View style={styles.container}>
       <CustomText

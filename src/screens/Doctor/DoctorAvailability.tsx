@@ -1,40 +1,61 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React, {useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import CustomWrapper from '../../components/wrappers/CustomWrapper';
 import CustomHeader from '../../components/header/CustomHeader';
 import {IMAGES} from '../../utils/theme';
 import {useUserStore} from '../../store/userStore';
 import AvailabilityDetails from './components/AvailabilityDetails';
 import {WeeklySchedule} from '../../utils/types/componentType';
-import {transformAvailabilityDataToArray, transformAvailabilityDataToWeeklySchedule} from '../../utils/helpers';
+import {
+  showToast,
+  transformAvailabilityDataToArray,
+  transformAvailabilityDataToWeeklySchedule,
+} from '../../utils/helpers';
 import {
   heightPercentageToDP,
   widthPercentageToDP,
 } from 'react-native-responsive-screen';
 import {CustomButton} from '../../components/common/CustomButton';
-import { availabilityMutation } from '../../services/doctor';
+import {setTimeScheduleInFirebase} from '../../services/doctor';
+import {signOutMutation} from '../../services/auth';
 
 const DoctorAvailability = () => {
   const {user} = useUserStore();
-
+  
   const availabilityRef = useRef<WeeklySchedule>(
-    transformAvailabilityDataToWeeklySchedule(user?.timings || [], 'date'),
+    transformAvailabilityDataToWeeklySchedule(user?.availability || [], 'date'),
   );
-  const handlePost = async () => {
-    console.log(availabilityRef.current,"asdsssss")
+  const handlePost = async () => {    
     const manipulatedData = transformAvailabilityDataToArray(availabilityRef);
-    console.log('m',manipulatedData);
-    console.log('user',user.uid);
-    await availabilityMutation(manipulatedData, user.uid);
+    // console.log(manipulatedData);
 
+    const res = await setTimeScheduleInFirebase(user.uid, manipulatedData);
+    if (!res?.success) {
+      showToast({
+        type: 'error',
+        message: res?.error.message,
+        position: 'bottom',
+      });
+      return;
+    }
+    showToast({message: ' successfully!', position: 'bottom'});
+    const setUser = useUserStore.getState().setUser;
+    setUser({
+      ...user,
+      currentTiming: res.scheduleId,
+    });
   };
+
   return (
     <CustomWrapper>
       <CustomHeader
         title={user.name}
         subtitle="Welcome"
         profilePic={IMAGES.userProfile}
-        icon={'notifications-outline'}
+        icon={'logout'}
+        iconPress={() => {
+          signOutMutation();
+        }}
       />
       <View style={styles.AvailabilityContainer}>
         <AvailabilityDetails availabilityRef={availabilityRef} />
