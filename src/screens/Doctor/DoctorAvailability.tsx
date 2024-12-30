@@ -1,5 +1,5 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React, {useEffect, useRef} from 'react';
+import {StyleSheet, View} from 'react-native';
+import React, {useRef} from 'react';
 import CustomWrapper from '../../components/wrappers/CustomWrapper';
 import CustomHeader from '../../components/header/CustomHeader';
 import {IMAGES} from '../../utils/theme';
@@ -11,38 +11,33 @@ import {
   transformAvailabilityDataToArray,
   transformAvailabilityDataToWeeklySchedule,
 } from '../../utils/helpers';
-import {
-  heightPercentageToDP,
-  widthPercentageToDP,
-} from 'react-native-responsive-screen';
+import {heightPercentageToDP} from 'react-native-responsive-screen';
 import {CustomButton} from '../../components/common/CustomButton';
 import {setTimeScheduleInFirebase} from '../../services/doctor';
 import {signOutMutation} from '../../services/auth';
 
 const DoctorAvailability = () => {
   const {user} = useUserStore();
-  
+
   const availabilityRef = useRef<WeeklySchedule>(
     transformAvailabilityDataToWeeklySchedule(user?.availability || [], 'date'),
   );
-  const handlePost = async () => {    
+  const handlePost = async () => {
     const manipulatedData = transformAvailabilityDataToArray(availabilityRef);
-    // console.log(manipulatedData);
-
     const res = await setTimeScheduleInFirebase(user.uid, manipulatedData);
     if (!res?.success) {
       showToast({
         type: 'error',
-        message: res?.error.message,
+        message: res?.error,
         position: 'bottom',
       });
       return;
     }
-    showToast({message: ' successfully!', position: 'bottom'});
+    showToast({message: 'Timings Updated Successfully!', position: 'bottom'});
     const setUser = useUserStore.getState().setUser;
     setUser({
       ...user,
-      currentTiming: res.scheduleId,
+      timiningID: res.timingID,
     });
   };
 

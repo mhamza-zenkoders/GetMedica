@@ -1,4 +1,4 @@
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import React from 'react';
 import CustomWrapper from '../../../components/wrappers/CustomWrapper';
 import SimpleHeader from '../../../components/header/SimpleHeader';
@@ -7,56 +7,26 @@ import {COLORS} from '../../../utils/theme';
 import {CustomButton} from '../../../components/common/CustomButton';
 import {useForm} from 'react-hook-form';
 import CustomRHFTextInput from '../../../components/common/CustomRHFTextInput';
-import {navigate, navigateReset} from '../../../utils/navigation';
+import {navigate} from '../../../utils/navigation';
 import {
   heightPercentageToDP,
-  widthPercentageToDP,
 } from 'react-native-responsive-screen';
 import {useRoute, RouteProp} from '@react-navigation/native';
 import {RootStackNavigationType} from '../../../utils/types/navigationType';
-import {loginMutation} from '../../../services/auth';
-import { showToast } from '../../../utils/helpers';
-import { useUserStore } from '../../../store/userStore';
-import { getTimeSchedule } from '../../../services/doctor';
+import { useLoginHook } from '../../../utils/hooks/useAuth';
 
 const Login = () => {
-  const {control, handleSubmit} = useForm({
-    // defaultValues: {email: 'hhhh@yopmail.com', password: 'Karachi123+'},
-  });
-  const {params} = useRoute<RouteProp<RootStackNavigationType, 'Login'>>();
+  const {
+    control,
+    handleSubmit,
+    formState: { isSubmitting, isValid },
+  } = useForm({ mode: 'onChange' });
+  const { params } = useRoute<RouteProp<RootStackNavigationType, "Login">>();
 
-  const LoginHandler = async (data: any) => {
+  const LoginHandler = async (data:any) => {
     data.role = params?.role;
-    const res = await loginMutation(data);
-    if (!res?.success) {
-      showToast({
-        type: 'error',
-        message: res.error.message,
-        position: 'bottom',
-      });
-      return;
-    }
-    const res1 = await getTimeSchedule(
-      res.id!,
-      res.user?.currentTime,
-    );
-    const setUser = useUserStore.getState().setUser;
-    setUser({
-      uid: res.id,
-      email: res.user?.email,
-      name: res.user?.name,
-      role: res.user?.role,
-      ...(data.role === 'doctor' && {
-        specialization: res.user?.specialization,
-        availability: res1.availability?.timings,
-      }),
-    });
-    showToast({message: 'User logged in successfully!', position: 'bottom'});
-    return data.role == 'doctor'
-      ? navigateReset('DoctorNavigator')
-      : navigateReset('PatientNavigator');
+    await useLoginHook(data);
   };
-
   return (
     <CustomWrapper>
       <SimpleHeader>
@@ -80,7 +50,7 @@ const Login = () => {
                 required: 'Email is required',
                 pattern: {
                   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                  message: 'Invalid email address',
+                  message: 'Invalid Email Address',
                 },
               }}
               name="email"
@@ -91,6 +61,8 @@ const Login = () => {
               secureTextEntry
               placeholder="Enter Password"
               requiredStar
+              rules={{required: 'Password is Required',               
+              }}
               control={control}
               name="password"
               title="Password"
@@ -106,9 +78,11 @@ const Login = () => {
             />
           </View>
           <View>
-            <CustomButton
-              // loading={}
-              title={'Continue'}
+          <CustomButton
+              loading={isSubmitting}
+              isValid={isValid}
+              disabled={isSubmitting}
+              title={"Continue"}
               onPress={handleSubmit(LoginHandler)}
             />
             <CustomText
@@ -158,4 +132,3 @@ const styles = StyleSheet.create({
 function getTimeScheduleFromFirebase(arg0: any, currentTime: any) {
   throw new Error('Function not implemented.');
 }
-

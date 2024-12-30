@@ -30,7 +30,7 @@ const CustomRHFTextInput: FC<CustomRHFTextInputProps> = ({
         key={name}
         render={({field: {onBlur, onChange, value}, fieldState: {error}}) => (
           <CustomTextInput
-          titleTextStyle={titleTextStyle}
+            titleTextStyle={titleTextStyle}
             value={value}
             onChangeText={onChange}
             error={error?.message}

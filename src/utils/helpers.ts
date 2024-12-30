@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import {MutableRefObject} from 'react';
 import {Day, WeeklySchedule} from './types/componentType';
 import {Timing} from './types/apiResponseType';
-import {TYPEOFSPECIALIZATION} from './constants';
+import {DaysOfWeek, TYPEOFSPECIALIZATION} from './constants';
 
 export const showToast = ({
   type,
@@ -24,6 +24,70 @@ export const showToast = ({
     console.log('SHOW TOAST ERROR', error);
   }
 };
+
+
+
+export const getAbbreviatedDays = (days: string[]): string => {
+  return days
+    .map(day => day.slice(0, 3).charAt(0) + day.slice(1, 3).toLowerCase())
+    .join(', ');
+};
+
+export const getNextDates = (availableDays: any) => {
+  const today = new Date();
+  const todayIndex = today.getDay();
+
+  const availableIndices = availableDays.map((day: any) =>
+    DaysOfWeek.indexOf(day),
+  );
+
+  const nextDates = [];
+  for (let i = 1; i <= 7; i++) {
+    const futureDate = new Date(today);
+    futureDate.setDate(today.getDate() + i);
+    const dayIndex = futureDate.getDay();
+
+    if (availableIndices.includes(dayIndex)) {
+      nextDates.push({
+        day: DaysOfWeek[dayIndex],
+        date: futureDate.toLocaleDateString('en-US', {day: '2-digit'}),
+      });
+    }
+  }
+  return nextDates;
+};
+
+
+export const formatTime12Hour = (time: string) => {
+  const [hour, minute] = time.split(':').map(Number);
+  const period = hour >= 12 ? 'PM' : 'AM';
+  const formattedHour = hour % 12 || 12;
+  return `${formattedHour}:${minute.toString().padStart(2, '0')} ${period}`;
+};
+
+export const generateTimeSlots = (startTime: string, endTime: string) => {
+  const slots = [];
+  let [startHour, startMinute] = startTime.split(':').map(Number);
+  const [endHour, endMinute] = endTime.split(':').map(Number);
+
+  while (
+    startHour < endHour ||
+    (startHour === endHour && startMinute < endMinute)
+  ) {
+    const time = `${startHour.toString().padStart(2, '0')}:${startMinute
+      .toString()
+      .padStart(2, '0')}`;
+    slots.push(time);
+
+    startMinute += 30;
+    if (startMinute >= 60) {
+      startMinute -= 60;
+      startHour += 1;
+    }
+  }
+  return slots;
+};
+
 
 export const formatTime = (value: Date, format?: 'hh:mm:ss') => {
   // console.log("formatTime", value);
@@ -81,13 +145,13 @@ export const transformAvailabilityDataToArray = (
         return {
           startTime: '00:00',
           endTime: '23:59',
-          day: day.toUpperCase(),
+          day: day,
         } as Timing;
       }
       return {
         startTime: formatTime(startTime),
         endTime: formatTime(endTime),
-        day: day.toUpperCase(),
+        day: day,
       } as Timing;
     }),
   );

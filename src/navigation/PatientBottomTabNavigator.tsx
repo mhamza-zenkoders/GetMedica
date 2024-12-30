@@ -14,24 +14,10 @@ export function PatientBottomTabNavigator() {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarHideOnKeyboard: true,
+        tabBarHideOnKeyboard: false,
         tabBarStyle: styles.TabBarStyle,
         tabBarLabelStyle: styles.tabBarLabelStyle,
         tabBarItemStyle: styles.tabBarItemStyle,
-        // tabBarVisibilityAnimationConfig: {
-        //   show: {
-        //     animation: 'timing',
-        //     config: {
-        //       duration: 0, // No animation for showing the tab bar
-        //     },
-        //   },
-        //   hide: {
-        //     animation: 'timing',
-        //     config: {
-        //       duration: 0, // No animation for hiding the tab bar
-        //     },
-        //   },
-        // },
       }}>
       <Tab.Screen
         name="PatientStack"

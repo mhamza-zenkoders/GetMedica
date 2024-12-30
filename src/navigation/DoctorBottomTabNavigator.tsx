@@ -17,7 +17,7 @@ export function DoctorBottomTabNavigator() {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarHideOnKeyboard: true,
+        tabBarHideOnKeyboard: false,
         tabBarStyle: styles.TabBarStyle,
         tabBarLabelStyle: styles.tabBarLabelStyle,
         tabBarItemStyle: styles.tabBarItemStyle,

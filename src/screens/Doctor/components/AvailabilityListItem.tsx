@@ -1,4 +1,11 @@
-import {Alert, FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Alert,
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React, {FC, MutableRefObject, useState} from 'react';
 import {CustomIcon} from '../../../components/common/CustomIcon';
 import {CustomText} from '../../../components/common/CustomText';
@@ -95,7 +102,6 @@ const AvailabilityListItem: FC<Props> = ({
       setTimingArray([...timingArray]);
 
       if (availabilityRef.current[day]) {
-       console.log(availabilityRef.current[day][index].startTime)
         return (availabilityRef.current[day][index].startTime = item);
       }
       availabilityRef.current[day] = [
@@ -143,7 +149,7 @@ const AvailabilityListItem: FC<Props> = ({
           type={selectedItem ? 'Ionicons' : 'Feather'}
           icon={selectedItem ? 'checkbox' : 'square'}
         />
-        <CustomText children={day} />
+        <CustomText children={day} fontSize="S13" />
       </TouchableOpacity>
       <View style={styles.PickerListContainer}>
         {selectedItem ? (
@@ -161,7 +167,6 @@ const AvailabilityListItem: FC<Props> = ({
                       mode="time"
                       value={item.startTime}
                       onChangeItem={item => {
-                        console.log(item,"ASDADS")
                         onTimeConfirm(item, index, 'startTime');
                       }}
                       containerStyle={styles.datePickerContainer}
@@ -220,7 +225,6 @@ const AvailabilityListItem: FC<Props> = ({
                           ]);
                           if (availabilityRef.current[day]) {
                             availabilityRef.current[day] = [
-                             
                               {
                                 is24Hours: false,
                                 startTime: undefined,
@@ -237,7 +241,13 @@ const AvailabilityListItem: FC<Props> = ({
               );
             }}
           />
-        ):(<CustomText children={'Unavailable'} color={COLORS.NeutralGrey50} textStyle={styles.unavailableText}/>)}
+        ) : (
+          <CustomText
+            children={'Unavailable'}
+            color={COLORS.NeutralGrey50}
+            textStyle={styles.unavailableText}
+          />
+        )}
       </View>
     </View>
   );
@@ -248,13 +258,13 @@ export default AvailabilityListItem;
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    justifyContent:'center'
+    justifyContent: 'center',
   },
   dayContainer: {
     flexDirection: 'row',
     gap: widthPercentageToDP(1),
-    width: widthPercentageToDP(33),
-    paddingTop: heightPercentageToDP(2)
+    width: widthPercentageToDP(32),
+    paddingTop: heightPercentageToDP(2),
   },
   timeContainer: {
     flexDirection: 'row',
@@ -284,8 +294,7 @@ const styles = StyleSheet.create({
   PickerListContainer: {
     flex: 1,
   },
-  unavailableText:{
-    paddingTop: heightPercentageToDP(2)
-
-  }
+  unavailableText: {
+    paddingTop: heightPercentageToDP(2),
+  },
 });

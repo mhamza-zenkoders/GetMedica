@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import CustomWrapper from '../../components/wrappers/CustomWrapper';
 import DesignHeader from '../../components/header/DesignHeader';
 import {useUserStore} from '../../store/userStore';
@@ -10,38 +10,70 @@ import SecondaryHeaderWithDropdown from '../../components/header/SecondaryHeader
 import {TYPEOFSPECIALIZATION} from '../../utils/constants';
 import {getDoctorsList} from '../../services/doctor';
 import {signOutMutation} from '../../services/auth';
-import CustomSearchInput from '../../components/common/CustomSeachInput/CustomSearchInput';
+import CustomSearchInput from '../../components/common/CustomSearchInput/CustomSearchInput';
 import DoctorsListContainer from './component/DoctorsListContainer';
+import { useDoctorsStore } from '../../store/doctorStore';
 
 const PatientDoctorsList = () => {
   const {user} = useUserStore();
   console.log(user);
-  const [doctorsList, setDoctorsList] = React.useState([]);
   const [specialization, setSpecialization] = React.useState<{
     value: string;
     label: string;
-  }>(TYPEOFSPECIALIZATION[0]);
+  } | null>(null);
+
+
   const [searchText, setSearchText] = React.useState<string>('');
 
-  useEffect(() => {
-    console.log('spec', specialization);
-    console.log('search', searchText);
-    const fetchDoctors = async () => {
-      try {
-        const doctors: any = await getDoctorsList();
-        console.log('Doctors in page:', doctors);
-        setDoctorsList(doctors);
-      } catch (error: any) {
-        console.error('Error fetching doctors:', error.message);
-      }
-    };
+  const {doctors, filteredDoctors, setDoctors, setFilteredDoctors} =
+    useDoctorsStore();
 
-    fetchDoctors();
-  }, [specialization, searchText]);
+
+  // useEffect(() => {
+  //   console.log('spec', specialization);
+  //   console.log('search', searchText);
+  //   const fetchDoctors = async () => {
+  //     try {
+  //       const doctors: any = await getDoctorsList();
+  //       console.log('Doctors in page:', doctors);
+  //       setDoctorsList(doctors);
+  //     } catch (error: any) {
+  //       console.error('Error fetching doctors:', error.message);
+  //     }
+  //   };
+
+  //   fetchDoctors();
+  // }, [specialization, searchText]);
+
+  useEffect(() => {
+      const fetchDoctors = async () => {
+        try {
+          const fetchedDoctors = await getDoctorsList(specialization);
+          setDoctors(fetchedDoctors);
+          setFilteredDoctors(fetchedDoctors);
+        } catch (error: any) {
+          console.error('Error fetching doctors:', error.message);
+        }
+      };
+  
+      fetchDoctors();
+    }, [specialization]);
+  
+    useEffect(() => {
+      const searchFilteredDoctors = doctors.filter((doctor: any) =>
+        doctor.name.toLowerCase().includes(searchText.toLowerCase()),
+      );
+      setFilteredDoctors(searchFilteredDoctors);
+    }, [searchText, doctors]);
+  
 
   const handleSearchSubmit = (e: any) => {
     setSearchText(e.nativeEvent.text);
   };
+
+  const dropdownData = useMemo(() => {
+    return [{ value: 'all', label: 'All' }, ...TYPEOFSPECIALIZATION];
+  }, []);
 
   return (
     <CustomWrapper>
@@ -54,14 +86,14 @@ const PatientDoctorsList = () => {
       />
       <SecondaryHeaderWithDropdown
         title={'Doctors Listing'}
-        dropdownData={TYPEOFSPECIALIZATION}
+        dropdownData={dropdownData}
         dropdownChangeText={setSpecialization}
       />
       <CustomSearchInput
         value={searchText}
         onSubmitEditing={handleSearchSubmit}
       />
-      <DoctorsListContainer data={doctorsList}/>
+      <DoctorsListContainer data={filteredDoctors}/>
     </CustomWrapper>
   );
 };
@@ -69,3 +101,5 @@ const PatientDoctorsList = () => {
 export default PatientDoctorsList;
 
 const styles = StyleSheet.create({});
+ 
+

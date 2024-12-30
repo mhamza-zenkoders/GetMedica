@@ -1,24 +1,25 @@
 import {create} from 'zustand';
-import {createJSONStorage, persist} from 'zustand/middleware';
-import MMKVStorage from '../utils/MMKVStorage';
 
-interface DoctorStore {
-  DoctorsList: any | null; 
-  setDoctorsList: (DoctorsList: any) => void;
-  clearDoctorsList: () => void;
+export interface Doctor {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  specialization: string;
+  timingID: string;
+  timeSchedule: any;
 }
 
-export const useDoctorStore = create(
-  persist<DoctorStore>(
-    (set) => ({
-    DoctorsList: null,
-      setDoctorsList: (DoctorsList) => set({DoctorsList}),
-      clearDoctorsList: () => set({DoctorsList: null}),
-    }),
-    {
-      name: 'doctor-storage',
-      storage: createJSONStorage(()=>MMKVStorage),
-    }
-  )
-);
+interface DoctorsStore {
+  doctors: any;
+  filteredDoctors: any;
+  setDoctors: (doctors: any) => void;
+  setFilteredDoctors: (filteredDoctors: any) => void;
+}
 
+export const useDoctorsStore = create<DoctorsStore>(set => ({
+  doctors: [],
+  filteredDoctors: [],
+  setDoctors: doctors => set({doctors}),
+  setFilteredDoctors: filteredDoctors => set({filteredDoctors}),
+}));

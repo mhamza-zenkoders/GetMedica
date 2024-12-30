@@ -14,6 +14,7 @@ import {COLORS, FONT} from '../../../utils/theme';
 type Props = {
   data: DropDownType[];
   value: string;
+  placeholder?:string
   required?: boolean;
   search?: boolean;
   label?: string;
@@ -26,6 +27,7 @@ type Props = {
 const CustomDropDown: FC<Props> = ({
   data,
   label,
+  placeholder,
   onChangeItem,
   search,
   error,

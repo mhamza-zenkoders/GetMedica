@@ -19,8 +19,6 @@ const AvailabilityDetails: FC<{
   const userAvailabilityDetails = transformAvailabilityDataToWeeklySchedule(
     user.availability || [],
   );
-  console.log('userava',userAvailabilityDetails);
-  console.log('user ref',availabilityRef);
   
   return (
     <View style={styles.container}>

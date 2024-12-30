@@ -13,7 +13,7 @@ export type RootStackNavigationType = {
   DoctorNavigator: undefined;
   PatientNavigator: undefined;
   PatientDoctorsList: undefined;
-  PatientBookAppointment: undefined;
+  PatientBookAppointment: {doctorIndex: number};
 };
 
 export type PatientStackNavigationType = {

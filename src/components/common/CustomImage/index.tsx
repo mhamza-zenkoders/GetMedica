@@ -71,7 +71,8 @@ export default CustomImage;
 const styles = StyleSheet.create({
   container: {
     overflow: 'hidden',
-  },
+    justifyContent:'center',
+    alignItems:'center'  },
 
-  image: {height: '200%', width: '200%',},
+  image: {height: '100%', width: '100%',},
 });

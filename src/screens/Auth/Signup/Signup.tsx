@@ -1,5 +1,5 @@
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import {ScrollView, StyleSheet, View} from 'react-native';
+import React, { useState } from 'react';
 import CustomWrapper from '../../../components/wrappers/CustomWrapper';
 import SimpleHeader from '../../../components/header/SimpleHeader';
 import {CustomText} from '../../../components/common/CustomText';
@@ -7,54 +7,34 @@ import {COLORS} from '../../../utils/theme';
 import {CustomButton} from '../../../components/common/CustomButton';
 import {useForm} from 'react-hook-form';
 import CustomRHFTextInput from '../../../components/common/CustomRHFTextInput';
-import {navigate, navigateReset} from '../../../utils/navigation';
+import {navigate} from '../../../utils/navigation';
 import {
   heightPercentageToDP,
-  widthPercentageToDP,
 } from 'react-native-responsive-screen';
 import {useRoute, RouteProp} from '@react-navigation/native';
 import {RootStackNavigationType} from '../../../utils/types/navigationType';
 import CustomRHFDropDown from '../../../components/common/CustomRHFDropDown/CustomRHFDropDown';
 import {TYPEOFSPECIALIZATION} from '../../../utils/constants';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {signupMutation} from '../../../services/auth';
-import {showToast} from '../../../utils/helpers';
-import { useUserStore } from '../../../store/userStore';
+import { useSignupHook } from '../../../utils/hooks/useAuth';
 
 const Signup = () => {
-  const {control, handleSubmit} = useForm({
-    // defaultValues: {email: 'hhhh@yopmail.com', password: 'Karachi123+'},
-  });
-  const {params} = useRoute<RouteProp<RootStackNavigationType, 'Login'>>();
+  const { control, handleSubmit, formState: { isValid, isSubmitting } } = useForm({ mode: 'onChange' });
+  const [loading, setLoading] = useState(false);
+  const { params } = useRoute<RouteProp<RootStackNavigationType, 'Login'>>();
 
   const SignupHandler = async (data: any) => {
-    console.log(data);
-    data.role = params?.role;
-    const res = await signupMutation(data);
-    console.log(res);
-    if (!res.success) {
-      showToast({
-        type: 'error',
-        message: res.error,
-        position: 'bottom',
-      });
-      return;
+    setLoading(true);
+    try {
+      data.role = params?.role;
+      await useSignupHook(data);
+    } catch (error) {
+      console.error('Signup Error:', error);
+    } finally {
+      setLoading(false);
     }
-    showToast({message: 'User created successfully!', position: 'bottom'});
-    const setUser = useUserStore.getState().setUser;
-    setUser({
-      uid: res.uid,
-      email: data?.email,
-      name: data?.name,
-      role: data?.role,
-      ...(data.role === 'doctor' && {
-        specialization: data?.specialization.value,
-      }),
-    });
-    return data.role == 'doctor'
-      ? navigateReset('DoctorNavigator')
-      : navigateReset('PatientNavigator');
   };
+
 
   return (
     <CustomWrapper>
@@ -115,7 +95,12 @@ const Signup = () => {
               secureTextEntry
               placeholder="Enter Password"
               requiredStar
-              rules={{required: 'Password is required'}}
+              rules={{required: 'Password is required',
+                // pattern: {
+                //   value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                //   message: 'Password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a number, and a symbol',
+                // }, 
+              }}
               control={control}
               name="password"
               title="Password"
@@ -123,8 +108,10 @@ const Signup = () => {
           </View>
           <View>
             <CustomButton
-              // loading={}
+              loading={isSubmitting}
+              disabled={isSubmitting}
               title={'Continue'}
+              isValid={isValid}
               onPress={handleSubmit(SignupHandler)}
             />
             <CustomText

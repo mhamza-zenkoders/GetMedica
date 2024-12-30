@@ -38,6 +38,7 @@ export type MixedAnimalType = {
   smallAnimal: number;
   exotics: number;
 };
+
 export type Day =
   | 'Monday'
   | 'Tuesday'

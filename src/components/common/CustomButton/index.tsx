@@ -22,7 +22,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   onPress,
   loading,
   containerStyle,
-  disabled = false,
+  disabled,
   isValid = null,
   textStyle,
 
@@ -46,7 +46,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
       ) : (
         <CustomText
           center
-          color={isValid != null && !isValid ? '#B3B3B3' : COLORS.white}
+          color={isValid != null && !isValid ? COLORS.white : COLORS.white}
           textStyle={[
             {fontFamily: FONT.mediumFont, fontWeight: '600'},
             textStyle,
@@ -63,7 +63,7 @@ export const CustomSocialButton: React.FC<CustomButtonProps> = ({
   onPress,
   loading,
   containerStyle,
-  disabled = false,
+  disabled,
   isValid = null,
   textStyle,
   secondary,
@@ -138,6 +138,6 @@ const styles = StyleSheet.create({
     borderColor: COLORS.NeutralGrey20,
   },
   disabledButton: {
-    backgroundColor: '#E5E5E5',
+    backgroundColor: COLORS.NeutralGrey70,
   },
 });

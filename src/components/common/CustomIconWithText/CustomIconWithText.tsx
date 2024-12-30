@@ -57,6 +57,7 @@ const CustomIconWithText: FC<Props> = ({
         // numberOfLines={1}
         children={text}
         fontSize={fontSize}
+        fontWeight={'500'}
         textStyle={[styles.text, textStyle]}
       />
     </View>
@@ -69,7 +70,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-
     gap: widthPercentageToDP(1.2),
   },
   image: {width: RFValue(16), height: RFValue(16)},

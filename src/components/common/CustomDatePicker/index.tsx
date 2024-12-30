@@ -127,7 +127,7 @@ const CustomDatePicker: FC<Props> = ({
             error && {borderColor: COLORS.errorRed50},
           ]}>
           <CustomText
-            fontSize="S11"
+            fontSize="S10"
             color={
               disabled
                 ? COLORS.NeutralGrey70

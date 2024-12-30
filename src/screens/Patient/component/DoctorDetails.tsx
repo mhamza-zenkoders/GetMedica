@@ -18,36 +18,31 @@ import {navigate} from '../../../utils/navigation';
 import {CustomIcon} from '../../../components/common/CustomIcon';
 import CustomImage from '../../../components/common/CustomImage';
 import {CustomText} from '../../../components/common/CustomText';
+import {Text} from '@react-navigation/elements';
+import { getAbbreviatedDays } from '../../../utils/helpers';
 
 type Props = {
   containerStyle?: ViewStyle;
   item: any;
-  index:number;
 };
 
-const getAbbreviatedDays = (days: string[]): string => {
-  return days
-    .map(day => day.slice(0, 3).charAt(0) + day.slice(1, 3).toLowerCase())
-    .join(', ');
-};
 
-const CustomDoctor: FC<Props> = ({containerStyle, item, index}) => {
+
+const DoctorDetails: FC<Props> = ({containerStyle, item}) => {
   return (
-    <TouchableOpacity
-      onPress={() => navigate('PatientBookAppointment', {doctorIndex:index})}
-      style={[styles.container, containerStyle]}>
+    <View style={[styles.container, containerStyle]}>
       <View style={styles.headerContainer}>
         <CustomImage
           source={{uri: DEFAULT_IMAGE_URL}}
           borderRadius={100}
-          width={RFValue(36)}
-          height={RFValue(36)}
+          width={RFValue(50)}
+          height={RFValue(50)}
         />
         <View style={{flex: 1}}>
           <CustomText
             children={item?.name}
             color={COLORS.bodytext}
-            fontSize="S15"
+            fontSize="S21"
             fontWeight="500"
           />
           <CustomText
@@ -58,27 +53,17 @@ const CustomDoctor: FC<Props> = ({containerStyle, item, index}) => {
                 : ''
             }
             fontWeight="500"
-            fontSize="S10"
+            fontSize="S14"
             color={COLORS.primary}
           />
         </View>
-        {/* <View style={styles.typeContainer}>
-          <CustomText
-            fontSize="S10"
-            fontWeight="500"
-            children={getPracticeType(
-              item?.user?.professionalDetail?.typeOfPractice,
-            )}
-            color={COLORS.primary}
-          />
-        </View> */}
       </View>
       <View style={styles.bottomContainer}>
         <CustomIconWithText
           iconType="Ionicons"
           iconName="calendar-number-outline"
-          iconSize={RFValue(16)}
-          fontSize="S11"
+          iconSize={RFValue(17)}
+          fontSize="S12"
           textStyle={styles.iconText}
           text={`Availability: ${getAbbreviatedDays(
             item.timeSchedule.availableDays,
@@ -87,32 +72,42 @@ const CustomDoctor: FC<Props> = ({containerStyle, item, index}) => {
         <CustomIconWithText
           iconType="SimpleLineIcons"
           iconName="graduation"
-          iconSize={RFValue(16)}
-          fontSize="S11"
+          iconSize={RFValue(17)}
+          fontSize="S12"
           textStyle={styles.iconText}
           text={`${DEFAULT_YEARS_OF_EXPERIENCE} Years of Experience`}
         />
         <CustomIconWithText
           iconType="AntDesign"
           iconName="staro"
-          iconSize={RFValue(16)}
-          fontSize="S11"
+          iconSize={RFValue(17)}
+          fontSize="S12"
           textStyle={styles.iconText}
           text={`${DEFAULT_RATING} star rating`}
         />
+        <CustomText
+          color={COLORS.NeutralGrey80}
+          fontSize="S12"
+          fontWeight="400"
+          textStyle={styles.description}>
+          <CustomText
+            children={item.name}
+            color={COLORS.primary}
+            fontSize="S12"
+          />{' '}
+          has dedicated over {DEFAULT_YEARS_OF_EXPERIENCE} years to
+          {' '+item.specialization + ' '}
+          care, focusing on treating musculoskeletal injuries, joint disorders,
+          and sports injuries. Known for his patient centered approach, he
+          tailors treatment plans to fit individual needs, from preventative
+          care to surgical solutions.
+        </CustomText>
       </View>
-      <CustomIcon
-        type="AntDesign"
-        icon="arrowright"
-        size={RFValue(16)}
-        color={COLORS.primary}
-        style={styles.rightArrowIcon}
-      />
-    </TouchableOpacity>
+    </View>
   );
 };
 
-export default CustomDoctor;
+export default DoctorDetails;
 
 const styles = StyleSheet.create({
   container: {
@@ -150,4 +145,8 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     bottom: RFValue(10),
   },
+  description:{
+    marginTop:heightPercentageToDP(2),
+    lineHeight:RFValue(20)
+  }
 });
