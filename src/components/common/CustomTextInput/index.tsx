@@ -111,7 +111,6 @@ const CustomTextInput: FC<ICustomTextInput> = props => {
               textStyle,
               multiline && {paddingTop: RFValue(9.768)},
               !editable && {color: COLORS.NeutralGrey50},
-              {textAlignVertical: 'top'} 
             ]}
             numberOfLines={numberOfLines}
             focusable={true}

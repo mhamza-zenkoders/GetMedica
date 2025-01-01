@@ -11,6 +11,27 @@ export const DEFAULT_YEARS_OF_EXPERIENCE = 9;
 
 export const DEFAULT_RATING = 5;
 
+export const DEFAULT_PHONE_NUMBER = '+1 22111 154 44';
+
+export const APPOINTMENTSTATUS = [
+  {
+    label: 'All',
+    value: 'all',
+  },
+  {
+    label: 'Pending',
+    value: 'pending',
+  },
+  {
+    label: 'Approved',
+    value: 'approved',
+  },
+  {
+    label: 'Rejected',
+    value: 'rejected',
+  },
+]
+
 export const DaysOfWeek = [
   'Monday',
   'Tuesday',

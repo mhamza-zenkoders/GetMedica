@@ -25,10 +25,13 @@ import {
   formatTime12Hour,
   generateTimeSlots,
   getNextDates,
+  showToast,
 } from '../../utils/helpers';
 import CustomTextInput from '../../components/common/CustomTextInput';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {CustomButton} from '../../components/common/CustomButton';
+import {bookAppointment} from '../../services/appointment';
+import {navigate} from '../../utils/navigation';
 
 const PatientBookAppointment = () => {
   const {user} = useUserStore();
@@ -44,8 +47,41 @@ const PatientBookAppointment = () => {
 
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
   const [selectedTime, setSelectedTime]: any = useState(null);
-
   const [reasonText, setReasonText]: any = useState('');
+
+  const handleBookAppointment = async () => {
+    if (!reasonText.trim()) {
+      return showToast({
+        type: 'error',
+        message: 'Fill all feilds',
+        position: 'bottom',
+      });
+    }
+
+    const res = await bookAppointment({
+      patientID: user.uid,
+      doctorID: doctorData.id,
+      day: selectedDate?.day,
+      date: selectedDate?.date,
+      time: selectedTime,
+      reason: reasonText,
+    });
+    if (res.success) {
+      showToast({
+        type: 'success',
+        message: 'Appointment Request has been sent',
+        position: 'bottom',
+      });
+      navigate('PatientAppointments');
+    } else {
+      console.log('Error Booking Appointment:',res.error),
+        showToast({
+          type: 'error',
+          message: 'Something went wrong!',
+          position: 'bottom',
+        });
+    }
+  };
 
   useEffect(() => {
     if (doctorData?.timeSchedule?.availableDays) {
@@ -121,9 +157,11 @@ const PatientBookAppointment = () => {
                         elevation: 0,
                       },
                 ]}
-                onPress={() => setSelectedDate(item)}>
+                onPress={() => {
+                  setSelectedDate(item);
+                }}>
                 <CustomText
-                  children={item.date}
+                  children={item.date.slice(0, 2)}
                   fontSize={'S15'}
                   color={
                     selectedDate?.day == item.day
@@ -190,7 +228,10 @@ const PatientBookAppointment = () => {
           textStyle={styles.reasonText}
           placeholder={`Please tell us why you would like to book this appointment with ${doctorData.name}.`}
         />
-        <CustomButton title={'Book Appointment'} onPress={() => {}} />
+        <CustomButton
+          title={'Book Appointment'}
+          onPress={() => handleBookAppointment()}
+        />
       </ScrollView>
     </CustomWrapper>
   );
@@ -234,5 +275,6 @@ const styles = StyleSheet.create({
   },
   reasonText: {
     fontSize: RFValue(13),
+    textAlignVertical: 'top',
   },
 });

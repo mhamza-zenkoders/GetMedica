@@ -19,14 +19,12 @@ import {CustomIcon} from '../../../components/common/CustomIcon';
 import CustomImage from '../../../components/common/CustomImage';
 import {CustomText} from '../../../components/common/CustomText';
 import {Text} from '@react-navigation/elements';
-import { getAbbreviatedDays } from '../../../utils/helpers';
+import {getAbbreviatedDays} from '../../../utils/helpers';
 
 type Props = {
   containerStyle?: ViewStyle;
   item: any;
 };
-
-
 
 const DoctorDetails: FC<Props> = ({containerStyle, item}) => {
   return (
@@ -96,7 +94,7 @@ const DoctorDetails: FC<Props> = ({containerStyle, item}) => {
             fontSize="S12"
           />{' '}
           has dedicated over {DEFAULT_YEARS_OF_EXPERIENCE} years to
-          {' '+item.specialization + ' '}
+          {' ' + item.specialization + ' '}
           care, focusing on treating musculoskeletal injuries, joint disorders,
           and sports injuries. Known for his patient centered approach, he
           tailors treatment plans to fit individual needs, from preventative
@@ -112,7 +110,8 @@ export default DoctorDetails;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: COLORS.white,
-    padding: RFValue(10),
+    padding: RFValue(12),
+    paddingVertical: RFValue(15),
     borderWidth: RFValue(1),
     borderColor: COLORS.NeutralGrey20,
     borderRadius: 20,
@@ -145,8 +144,8 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     bottom: RFValue(10),
   },
-  description:{
-    marginTop:heightPercentageToDP(2),
-    lineHeight:RFValue(20)
-  }
+  description: {
+    marginTop: heightPercentageToDP(2),
+    lineHeight: RFValue(20),
+  },
 });

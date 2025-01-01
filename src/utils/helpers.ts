@@ -25,7 +25,11 @@ export const showToast = ({
   }
 };
 
-
+export const getUserNameFromAppointments = async (userRef: any) => {
+  const doc = await userRef.get();
+  const userData = await doc.data();
+  return userData;
+};
 
 export const getAbbreviatedDays = (days: string[]): string => {
   return days
@@ -50,13 +54,16 @@ export const getNextDates = (availableDays: any) => {
     if (availableIndices.includes(dayIndex)) {
       nextDates.push({
         day: DaysOfWeek[dayIndex],
-        date: futureDate.toLocaleDateString('en-US', {day: '2-digit'}),
+        date: futureDate.toLocaleDateString('en-GB', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+        }),
       });
     }
   }
   return nextDates;
 };
-
 
 export const formatTime12Hour = (time: string) => {
   const [hour, minute] = time.split(':').map(Number);
@@ -88,6 +95,16 @@ export const generateTimeSlots = (startTime: string, endTime: string) => {
   return slots;
 };
 
+export const addMinutesToTime = (time: string, minutes: number): string => {
+  const [hours, mins] = time.split(':').map(Number);
+  const date = new Date();
+  date.setHours(hours, mins);
+  date.setMinutes(date.getMinutes() + minutes);
+
+  const endHours = String(date.getHours()).padStart(2, '0');
+  const endMinutes = String(date.getMinutes()).padStart(2, '0');
+  return `${endHours}:${endMinutes}`;
+};
 
 export const formatTime = (value: Date, format?: 'hh:mm:ss') => {
   // console.log("formatTime", value);
@@ -103,9 +120,10 @@ export const formatTime = (value: Date, format?: 'hh:mm:ss') => {
       value.getHours() >= 12 ? 'PM' : 'AM'
     }`;
   } catch (error) {
-    console.log('ERRRO', error);
+    console.log('ERROR', error);
   }
 };
+
 export const formatDate = (value: Date, format?: 'yyyy-mm-dd') => {
   try {
     let year = value.getFullYear();
@@ -122,7 +140,7 @@ export const formatDate = (value: Date, format?: 'yyyy-mm-dd') => {
       .toString()
       .padStart(2, '0')}/${year}`;
   } catch (error) {
-    console.log('ERRRO', error);
+    console.log('ERROR', error);
   }
 };
 
@@ -133,9 +151,6 @@ export const transformAvailabilityDataToArray = (
     times.map(({startTime, endTime, is24Hours}: any) => {
       const formatTime = (isoString: any) => {
         const date = new Date(isoString);
-        console.log(
-          `${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`,
-        );
         return `${date.getHours()}:${String(date.getMinutes()).padStart(
           2,
           '0',
@@ -178,10 +193,10 @@ export const transformAvailabilityDataToWeeklySchedule = (
           : new Date(dayjs().format('YYYY-MM-DD') + 'T' + curr.endTime),
       is24Hours: curr.startTime === '00:00:00' && curr.endTime === '23:59:00',
     });
-    console.log(acc);
     return acc;
-  }, {} as WeeklySchedule); // Correctly specify the initial accumulator
+  }, {} as WeeklySchedule);
 };
+
 export const transformAvailabilityDateToWeeklySchedule = (
   availability: Timing[],
 ): WeeklySchedule => {
@@ -196,7 +211,6 @@ export const transformAvailabilityDateToWeeklySchedule = (
       endTime: curr.endTime,
       is24Hours: curr.startTime === '00:00:00' && curr.endTime === '23:59:00',
     });
-    console.log(acc);
     return acc;
   }, {} as WeeklySchedule); // Correctly specify the initial accumulator
 };

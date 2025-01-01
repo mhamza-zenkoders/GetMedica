@@ -96,10 +96,10 @@ const Signup = () => {
               placeholder="Enter Password"
               requiredStar
               rules={{required: 'Password is required',
-                // pattern: {
-                //   value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                //   message: 'Password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a number, and a symbol',
-                // }, 
+                pattern: {
+                  value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                  message: 'Password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a number, and a symbol',
+                }, 
               }}
               control={control}
               name="password"

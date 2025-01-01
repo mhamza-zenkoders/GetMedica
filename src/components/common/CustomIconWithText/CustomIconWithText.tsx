@@ -74,6 +74,6 @@ const styles = StyleSheet.create({
   },
   image: {width: RFValue(16), height: RFValue(16)},
   text: {
-    // flex: 1,
+    includeFontPadding:false,
   },
 });

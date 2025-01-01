@@ -48,7 +48,7 @@ export const setTimeScheduleInFirebase = async (
 
     return {success: true, timingID: timeScheduleRef.id};
   } catch (error: any) {
-    console.log('error', error);
+    console.log('Error Seeting Time Schedule:', error);
     return {success: false, error: error.message};
   }
 };
@@ -57,7 +57,6 @@ export const getDoctorsList = async (
   specialization?: {value: string; label: string} | null,
 ) => {
   try {
-    console.log('dssssssssssssssssss', specialization);
     let doctorCollectionRef = firestore()
       .collection('users')
       .where('timingID', '!=', null);

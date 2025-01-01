@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   rightArrowIcon: {
     position: 'absolute',
     right: RFValue(10),
-    backgroundColor: COLORS.primaryTransparant5,
+    backgroundColor: COLORS.primaryTransparant10,
     padding: RFValue(6),
     borderRadius: 100,
     bottom: RFValue(10),

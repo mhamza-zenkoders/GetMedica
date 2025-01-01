@@ -129,6 +129,3 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
   },
 });
-function getTimeScheduleFromFirebase(arg0: any, currentTime: any) {
-  throw new Error('Function not implemented.');
-}

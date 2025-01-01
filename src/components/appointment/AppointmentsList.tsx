@@ -1,33 +1,34 @@
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import {COLORS} from '../../../utils/theme';
-import CustomDoctor from './CustomDoctor';
+import {COLORS} from '../../utils/theme';
 import {heightPercentageToDP} from 'react-native-responsive-screen';
-import {CustomIcon} from '../../../components/common/CustomIcon';
+import AppointmentCard from './AppointmentCard';
+import {useUserStore} from '../../store/userStore';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {CustomText} from '../../../components/common/CustomText';
+import {CustomIcon} from '../../components/common/CustomIcon';
+import {CustomText} from '../../components/common/CustomText';
 
 type Props = {
   data: any;
+  handleStatusChange?: (id:string, status: string) => void;
 };
-const DoctorsListContainer: React.FC<Props> = ({data}) => {
+const AppointmentsList: React.FC<Props> = ({data, handleStatusChange}) => {
+  const {user} = useUserStore();
   return (
     <View style={styles.container}>
       <FlatList
         data={data}
-        style={styles.FlatList}
         keyExtractor={(item: any) => item.id}
-        
         ListEmptyComponent={
           <View style={styles.emptyList}>
             <CustomIcon
-              icon="user-doctor"
-              type="FontAwesome6"
+              icon="calendar-check-o"
+              type="FontAwesome"
               color={COLORS.primary}
               size={RFValue(25)}
             />
             <CustomText
-              children={'No Doctors Available'}
+              children={'No Appointments Available'}
               fontSize={'S12'}
               color={COLORS.NeutralGrey60}
               fontWeight={'500'}
@@ -36,10 +37,11 @@ const DoctorsListContainer: React.FC<Props> = ({data}) => {
           </View>
         }
         renderItem={({item, index}: any) => (
-          <CustomDoctor
+          <AppointmentCard
             item={item}
             containerStyle={styles.flatListItem}
-            index={index}
+            role={user.role}
+            handleStatusChange={handleStatusChange}
           />
         )}
       />
@@ -47,15 +49,12 @@ const DoctorsListContainer: React.FC<Props> = ({data}) => {
   );
 };
 
-export default DoctorsListContainer;
+export default AppointmentsList;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: heightPercentageToDP(1),
-  },
-  FlatList: {
-    flex: 1,
   },
   flatListItem: {
     marginVertical: heightPercentageToDP(1),

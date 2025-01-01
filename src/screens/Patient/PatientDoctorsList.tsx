@@ -1,10 +1,10 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect, useMemo} from 'react';
 import CustomWrapper from '../../components/wrappers/CustomWrapper';
 import DesignHeader from '../../components/header/DesignHeader';
 import {useUserStore} from '../../store/userStore';
 import CustomHeader from '../../components/header/CustomHeader';
-import {IMAGES} from '../../utils/theme';
+import {COLORS, IMAGES} from '../../utils/theme';
 import {widthPercentageToDP} from 'react-native-responsive-screen';
 import SecondaryHeaderWithDropdown from '../../components/header/SecondaryHeaderWithDropdown';
 import {TYPEOFSPECIALIZATION} from '../../utils/constants';
@@ -12,68 +12,51 @@ import {getDoctorsList} from '../../services/doctor';
 import {signOutMutation} from '../../services/auth';
 import CustomSearchInput from '../../components/common/CustomSearchInput/CustomSearchInput';
 import DoctorsListContainer from './component/DoctorsListContainer';
-import { useDoctorsStore } from '../../store/doctorStore';
+import {useDoctorsStore} from '../../store/doctorStore';
 
 const PatientDoctorsList = () => {
   const {user} = useUserStore();
-  console.log(user);
+  const [loading, setLoading] = React.useState(true);
+  const dropdownData = useMemo(() => {
+    return [{value: 'all', label: 'All'}, ...TYPEOFSPECIALIZATION];
+  }, []);
   const [specialization, setSpecialization] = React.useState<{
     value: string;
     label: string;
-  } | null>(null);
-
+  }>(dropdownData[0]);
 
   const [searchText, setSearchText] = React.useState<string>('');
 
   const {doctors, filteredDoctors, setDoctors, setFilteredDoctors} =
     useDoctorsStore();
 
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const fetchedDoctors = await getDoctorsList(specialization);
+        setDoctors(fetchedDoctors);
+        setFilteredDoctors(fetchedDoctors);
+        setLoading(false);
+      } catch (error: any) {
+        console.error('Error fetching doctors:', error.message);
+      }
+    };
 
-  // useEffect(() => {
-  //   console.log('spec', specialization);
-  //   console.log('search', searchText);
-  //   const fetchDoctors = async () => {
-  //     try {
-  //       const doctors: any = await getDoctorsList();
-  //       console.log('Doctors in page:', doctors);
-  //       setDoctorsList(doctors);
-  //     } catch (error: any) {
-  //       console.error('Error fetching doctors:', error.message);
-  //     }
-  //   };
-
-  //   fetchDoctors();
-  // }, [specialization, searchText]);
+    fetchDoctors();
+  }, [specialization]);
 
   useEffect(() => {
-      const fetchDoctors = async () => {
-        try {
-          const fetchedDoctors = await getDoctorsList(specialization);
-          setDoctors(fetchedDoctors);
-          setFilteredDoctors(fetchedDoctors);
-        } catch (error: any) {
-          console.error('Error fetching doctors:', error.message);
-        }
-      };
-  
-      fetchDoctors();
-    }, [specialization]);
-  
-    useEffect(() => {
-      const searchFilteredDoctors = doctors.filter((doctor: any) =>
-        doctor.name.toLowerCase().includes(searchText.toLowerCase()),
-      );
-      setFilteredDoctors(searchFilteredDoctors);
-    }, [searchText, doctors]);
-  
+    const searchFilteredDoctors = doctors.filter((doctor: any) =>
+      doctor.name.toLowerCase().includes(searchText.toLowerCase()),
+    );
+    setFilteredDoctors(searchFilteredDoctors);
+  }, [searchText, doctors]);
 
   const handleSearchSubmit = (e: any) => {
     setSearchText(e.nativeEvent.text);
   };
 
-  const dropdownData = useMemo(() => {
-    return [{ value: 'all', label: 'All' }, ...TYPEOFSPECIALIZATION];
-  }, []);
+
 
   return (
     <CustomWrapper>
@@ -86,6 +69,7 @@ const PatientDoctorsList = () => {
       />
       <SecondaryHeaderWithDropdown
         title={'Doctors Listing'}
+        value={specialization}
         dropdownData={dropdownData}
         dropdownChangeText={setSpecialization}
       />
@@ -93,13 +77,21 @@ const PatientDoctorsList = () => {
         value={searchText}
         onSubmitEditing={handleSearchSubmit}
       />
-      <DoctorsListContainer data={filteredDoctors}/>
+      {loading ? (
+        <View style={styles.loaderStyle}>
+          <ActivityIndicator size="large" color={COLORS.primary} />
+        </View>
+      ) : (
+        <DoctorsListContainer data={filteredDoctors} />
+      )}
     </CustomWrapper>
   );
 };
 
 export default PatientDoctorsList;
 
-const styles = StyleSheet.create({});
- 
-
+const styles = StyleSheet.create({loaderStyle:{
+  alignItems:'center',
+  justifyContent:'center',
+  flex:1,
+}});
