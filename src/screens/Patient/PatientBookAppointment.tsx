@@ -31,7 +31,7 @@ import CustomTextInput from '../../components/common/CustomTextInput';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {CustomButton} from '../../components/common/CustomButton';
 import {bookAppointment} from '../../services/appointment';
-import {navigate} from '../../utils/navigation';
+import {navigate, navigateReset} from '../../utils/navigation';
 
 const PatientBookAppointment = () => {
   const {user} = useUserStore();
@@ -72,7 +72,7 @@ const PatientBookAppointment = () => {
         message: 'Appointment Request has been sent',
         position: 'bottom',
       });
-      navigate('PatientAppointments');
+      navigateReset('PatientAppointments');
     } else {
       console.log('Error Booking Appointment:',res.error),
         showToast({
@@ -161,7 +161,7 @@ const PatientBookAppointment = () => {
                   setSelectedDate(item);
                 }}>
                 <CustomText
-                  children={item.date.slice(0, 2)}
+                  children={item.date.slice(-2)}
                   fontSize={'S15'}
                   color={
                     selectedDate?.day == item.day
@@ -202,7 +202,7 @@ const PatientBookAppointment = () => {
               onPress={() => setSelectedTime(slot)}>
               <CustomText
                 children={formatTime12Hour(slot)}
-                fontSize={'S15'}
+                fontSize={'S14'}
                 color={
                   selectedTime === slot ? COLORS.white : COLORS.NeutralGrey100
                 }

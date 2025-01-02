@@ -1,20 +1,23 @@
-import { loginMutation, signupMutation } from "../../services/auth";
-import { getTimeSchedule } from "../../services/doctor";
-import { useUserStore } from "../../store/userStore";
-import { showToast } from "../../utils/helpers";
-import { navigateReset } from "../../utils/navigation";
+import {loginMutation, signupMutation} from '../../services/auth';
+import {getTimeSchedule} from '../../services/doctor';
+import {useUserStore} from '../../store/userStore';
+import {showToast} from '../../utils/helpers';
+import {navigateReset} from '../../utils/navigation';
 
 export const useSignupHook = async (data: any) => {
   try {
     data.name = data.name
       .split(' ')
-      .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .map(
+        (word: string) =>
+          word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
+      )
       .join(' ');
     console.log('Data in Signup Hook:', data);
     const res = await signupMutation(data);
 
     if (!res.success) {
-      showToast({
+      return showToast({
         type: 'error',
         message: res.error || 'Signup failed',
         position: 'bottom',
@@ -33,12 +36,14 @@ export const useSignupHook = async (data: any) => {
       email: data.email,
       name: data.name,
       role: data.role,
-      ...(data.role === 'doctor' && { specialization: data.specialization?.value }),
+      ...(data.role === 'doctor' && {
+        specialization: data.specialization?.value,
+      }),
     });
 
-    const navigator = data.role === 'doctor' ? 'DoctorNavigator' : 'PatientNavigator';
+    const navigator =
+      data.role === 'doctor' ? 'DoctorNavigator' : 'PatientNavigator';
     navigateReset(navigator);
-    
   } catch (error: any) {
     showToast({
       type: 'error',
@@ -49,27 +54,23 @@ export const useSignupHook = async (data: any) => {
   }
 };
 
-
-
 export const useLoginHook = async (data: any) => {
   try {
     const res = await loginMutation(data);
     if (!res.success || !res.id) {
       showToast({
-        type: "error",
-        message: res.error || "Login failed",
-        position: "bottom",
+        type: 'error',
+        message: res.error || 'Login failed',
+        position: 'bottom',
       });
       return;
     }
 
-    console.log('res id',res.id)
-    console.log('res user',res.id)
-
-
+    console.log('res id', res.id);
+    console.log('res user', res.id);
 
     const availabilityData =
-      data.role === "doctor"
+      data.role === 'doctor'
         ? await getTimeSchedule(res.id, res.user?.timingID)
         : null;
 
@@ -79,26 +80,21 @@ export const useLoginHook = async (data: any) => {
       email: res.user?.email,
       name: res.user?.name,
       role: res.user?.role,
-      ...(data.role === "doctor" && {
+      ...(data.role === 'doctor' && {
         specialization: res.user?.specialization,
         availability: availabilityData?.availability?.timings || [],
       }),
     });
 
-    showToast({
-      message: "User logged in successfully!",
-      position: "bottom",
-    });
-
-    const navigator = data.role === 'doctor' ? 'DoctorNavigator' : 'PatientNavigator';
+    const navigator =
+      data.role === 'doctor' ? 'DoctorNavigator' : 'PatientNavigator';
     navigateReset(navigator);
-
   } catch (error) {
-    console.error("Error in LoginHook:", error);
+    console.error('Error in LoginHook:', error);
     showToast({
-      type: "error",
-      message: "An unexpected error occurred during login.",
-      position: "bottom",
+      type: 'error',
+      message: 'An unexpected error occurred during login.',
+      position: 'bottom',
     });
   }
 };

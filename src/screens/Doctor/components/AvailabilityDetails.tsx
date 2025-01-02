@@ -19,13 +19,13 @@ const AvailabilityDetails: FC<{
   const userAvailabilityDetails = transformAvailabilityDataToWeeklySchedule(
     user.availability || [],
   );
-  
+
   return (
     <View style={styles.container}>
       <CustomText
         children="Set Your Weekly Availability"
         color={COLORS.title}
-        fontSize="S22"
+        fontSize="S20"
         fontWeight="500"
         textStyle={styles.textStyle}
       />

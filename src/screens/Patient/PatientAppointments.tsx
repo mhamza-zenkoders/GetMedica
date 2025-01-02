@@ -8,8 +8,9 @@ import {COLORS, IMAGES} from '../../utils/theme';
 import {useUserStore} from '../../store/userStore';
 import {APPOINTMENTSTATUS} from '../../utils/constants';
 import AppointmentsList from '../../components/appointment/AppointmentsList';
-import {getAppointmentByPatient} from '../../services/appointment';
+import {getAppointments} from '../../services/appointment';
 import {ActivityIndicator} from 'react-native';
+import { getUserDetailsFromAppointments } from '../../utils/helpers';
 
 const PatientAppointments = () => {
   const {user} = useUserStore();
@@ -23,9 +24,15 @@ const PatientAppointments = () => {
     const fetchAppointments = async () => {
       try {
         setLoading(true);
-        const fetchedAppointments = await getAppointmentByPatient(
+        const fetchedAppointments:any = await getAppointments(
           user.uid,
+          user.role,
           status,
+        );
+        await Promise.allSettled(
+          fetchedAppointments.map(async (item: any) => {
+            item.user = await getUserDetailsFromAppointments(item.doctorRef);
+          }),
         );
         setAppointments(fetchedAppointments);
       } catch (error: any) {

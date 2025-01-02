@@ -38,6 +38,7 @@ const DoctorAvailability = () => {
     setUser({
       ...user,
       timiningID: res.timingID,
+      availability:manipulatedData,
     });
   };
 

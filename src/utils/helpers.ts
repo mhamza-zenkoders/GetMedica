@@ -25,7 +25,7 @@ export const showToast = ({
   }
 };
 
-export const getUserNameFromAppointments = async (userRef: any) => {
+export const getUserDetailsFromAppointments = async (userRef: any) => {
   const doc = await userRef.get();
   const userData = await doc.data();
   return userData;
@@ -54,15 +54,20 @@ export const getNextDates = (availableDays: any) => {
     if (availableIndices.includes(dayIndex)) {
       nextDates.push({
         day: DaysOfWeek[dayIndex],
-        date: futureDate.toLocaleDateString('en-GB', {
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric',
-        }),
+        date: futureDate.toLocaleDateString('fr-CA'),
       });
     }
   }
   return nextDates;
+};
+
+export const convertDateToUSLocale = (date: any) => {
+  const newDate = new Date(date);
+  return newDate.toLocaleDateString('en-US', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
 };
 
 export const formatTime12Hour = (time: string) => {

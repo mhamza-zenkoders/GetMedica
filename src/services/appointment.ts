@@ -101,7 +101,104 @@ export const getAppointmentByDoctor = async (
   }
 };
 
+export const getAppointments = async (
+  id: string,
+  role: string,
+  status?: {value: string; label: string},
+) => {
+  try {
+    let appointmentRef;
+    if (role == 'doctor') {
+      appointmentRef = firestore()
+        .collection('appointments')
+        .where('doctorID', '==', id);
+    } else {
+      appointmentRef = firestore()
+        .collection('appointments')
+        .where('patientID', '==', id);
+    }
+    if (status && status.value !== 'all') {
+      appointmentRef = appointmentRef.where('status', '==', status.value);
+    }
+    const appointmentDoc = await appointmentRef.get();
+    if (!appointmentDoc.empty) {
+      const appointments = appointmentDoc.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      return appointments;
+    } else {
+      showToast({
+        message: 'No Appointments Found',
+        type: 'info',
+        position: 'bottom',
+      });
+      return [];
+    }
+  } catch (error) {
+    console.error('Error Fetching Appointments:', error);
+    showToast({
+      message: 'Failed to Fetch Appointments.',
+      type: 'error',
+      position: 'bottom',
+    });
+  }
+};
 
+export const getAppointmentsbyMonth = async (
+  id: string,
+  role: string,
+  status?: {value: string; label: string},
+  month?: string,
+) => {
+  try {
+    let appointmentRef;
+    if (role == 'doctor') {
+      appointmentRef = firestore()
+        .collection('appointments')
+        .where('doctorID', '==', id);
+    } else {
+      appointmentRef = firestore()
+        .collection('appointments')
+        .where('patientID', '==', id);
+    }
+    if (status && status.value !== 'all') {
+      appointmentRef = appointmentRef.where('status', '==', status.value);
+    }
+
+    if (month) {
+      const startOfMonth = `${month}-01`;
+      const endOfMonth = `${month}-31`;
+
+      appointmentRef = appointmentRef
+        .where('date', '>=', startOfMonth)
+        .where('date', '<=', endOfMonth);
+    }
+
+    const appointmentDoc = await appointmentRef.get();
+    if (!appointmentDoc.empty) {
+      const appointments = appointmentDoc.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      return appointments;
+    } else {
+      // showToast({
+      //   message: 'No Appointments Found',
+      //   type: 'info',
+      //   position: 'bottom',
+      // });
+      return [];
+    }
+  } catch (error) {
+    console.error('Error Fetching Appointments:', error);
+    showToast({
+      message: 'Failed to Fetch Appointments.',
+      type: 'error',
+      position: 'bottom',
+    });
+  }
+};
 
 export const updateAppointmentStatus = async (
   appointmentID: string,
@@ -112,13 +209,14 @@ export const updateAppointmentStatus = async (
       .collection('appointments')
       .doc(appointmentID);
 
-    await appointmentRef.update({ status });
+    await appointmentRef.update({status});
 
     showToast({
       message: `Appointment ${status}.`,
       type: 'success',
       position: 'bottom',
     });
+    return {success: true};
   } catch (error) {
     console.error(`Error updating status to ${status}:`, error);
     showToast({
@@ -126,5 +224,6 @@ export const updateAppointmentStatus = async (
       type: 'error',
       position: 'bottom',
     });
+    return {success: false};
   }
 };

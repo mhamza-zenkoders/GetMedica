@@ -23,11 +23,10 @@ export const setTimeScheduleInFirebase = async (
   try {
     for (const item of availabilityData) {
       if (item.startTime === 'NaN:NaN' || item.endTime === 'NaN:NaN') {
-        return showToast({
-          message: 'Start time or End time cannot be NaN.',
-          type: 'success',
-          position: 'bottom',
-        });
+        throw new Error('Start time or End time cannot be NaN.');
+      }
+      if (+item.startTime.split(':')[0] > item.endTime.split(':')[0]) {
+        throw new Error('End Time should be greater than Start Time');
       }
     }
 
@@ -48,7 +47,7 @@ export const setTimeScheduleInFirebase = async (
 
     return {success: true, timingID: timeScheduleRef.id};
   } catch (error: any) {
-    console.log('Error Seeting Time Schedule:', error);
+    console.log('Error Updating Time Schedule:', error);
     return {success: false, error: error.message};
   }
 };

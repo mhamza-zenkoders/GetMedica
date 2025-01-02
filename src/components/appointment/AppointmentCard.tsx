@@ -17,10 +17,7 @@ import {
 } from 'react-native-responsive-screen';
 import CustomImage from '../../components/common/CustomImage';
 import {CustomText} from '../../components/common/CustomText';
-import {
-  formatTime12Hour,
-  getUserNameFromAppointments,
-} from '../../utils/helpers';
+import {convertDateToUSLocale, formatTime12Hour} from '../../utils/helpers';
 import {CustomButton} from '../../components/common/CustomButton';
 import {updateAppointmentStatus} from '../../services/appointment';
 
@@ -29,39 +26,15 @@ type Props = {
   item: any;
   role?: string;
   index?: number;
-  handleStatusChange?: (id: string, status: string) => void;
 };
 
-const AppoitmentCard: FC<Props> = ({
-  containerStyle,
-  item,
-  index,
-  role,
-  handleStatusChange,
-}) => {
-  const [userData, setUserData] = useState<any>(null);
+const AppoitmentCard: FC<Props> = ({containerStyle, item, index, role}) => {
+  const [showButtons, setShowButtons] = useState<boolean>(true);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (role == 'patient') {
-        const data = await getUserNameFromAppointments(item.doctorRef);
-        setUserData(data);
-      } else {
-        const data = await getUserNameFromAppointments(item.patientRef);
-        setUserData(data);
-      }
-    };
-
-    fetchUserData();
-  }, [item.doctorRef, item.patientRef]);
-
-  if (!userData) {
-    return (
-      <View style={[styles.container, containerStyle]}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
-      </View>
-    );
-  }
+  const handleStatusChange = (id: string, status: string) => {
+    updateAppointmentStatus(id, status);
+    setShowButtons(false);
+  };
 
   return (
     <TouchableOpacity
@@ -76,50 +49,50 @@ const AppoitmentCard: FC<Props> = ({
         />
         <View style={{flex: 1}}>
           <CustomText
-            children={userData.name}
+            children={item?.user.name}
             color={COLORS.bodytext}
             fontSize="S15"
             fontWeight="500"></CustomText>
-          {userData.specialization ? (
+          {role == 'patient' && (
             <CustomText
               children={
-                userData?.specialization
-                  ? userData.specialization.charAt(0).toUpperCase() +
-                    userData.specialization.slice(1)
+                item.user?.specialization
+                  ? item.user.specialization.charAt(0).toUpperCase() +
+                    item.user.specialization.slice(1)
                   : ''
               }
               fontWeight="500"
               fontSize="S10"
               color={COLORS.primary}
             />
-          ) : (
-            <></>
           )}
         </View>
-        <View
-          style={[
-            styles.typeContainer,
-            item.status === 'pending'
-              ? {backgroundColor: COLORS.NeutralGrey10}
-              : item.status === 'rejected'
-              ? {backgroundColor: COLORS.errorRedTransparent10}
-              : {backgroundColor: COLORS.primaryTransparant10},
-          ]}>
-          <CustomText
-            fontSize="S12"
-            fontWeight="600"
-            children={
-              item.status.charAt(0).toUpperCase() + item.status.slice(1)
-            }
-            color={
-              item.status === 'pending'
-                ? COLORS.NeutralGrey70
-                : item.status === 'rejected'
-                ? COLORS.errorRed50
-                : COLORS.primary
-            }
-          />
-        </View>
+        {role == 'patient' && (
+          <View
+            style={[
+              styles.typeContainer,
+              item?.status === 'pending'
+                ? {backgroundColor: COLORS.NeutralGrey10}
+                : item?.status === 'rejected'
+                ? {backgroundColor: COLORS.errorRedTransparent10}
+                : {backgroundColor: COLORS.primaryTransparant10},
+            ]}>
+            <CustomText
+              fontSize="S12"
+              fontWeight="600"
+              children={
+                item.status.charAt(0).toUpperCase() + item.status.slice(1)
+              }
+              color={
+                item.status === 'pending'
+                  ? COLORS.NeutralGrey70
+                  : item.status === 'rejected'
+                  ? COLORS.errorRed50
+                  : COLORS.primary
+              }
+            />
+          </View>
+        )}
       </View>
       <View style={styles.bottomContainer}>
         <CustomIconWithText
@@ -128,7 +101,7 @@ const AppoitmentCard: FC<Props> = ({
           iconSize={RFValue(16)}
           fontSize="S11"
           textStyle={styles.iconText}
-          text={item.date}
+          text={convertDateToUSLocale(item.date)}
         />
         <CustomIconWithText
           iconType="SimpleLineIcons"
@@ -159,12 +132,12 @@ const AppoitmentCard: FC<Props> = ({
         />
       </View>
 
-      {role == 'doctor' && item.status == 'pending' && (
+      {role == 'doctor' && item.status == 'pending' && showButtons && (
         <View style={styles.buttonContainer}>
           <CustomButton
             title={'Decline'}
             onPress={() => {
-              handleStatusChange && handleStatusChange(item.id, 'rejected');
+              handleStatusChange(item.id, 'rejected');
             }}
             containerStyle={styles.cancelButton}
             textStyle={styles.cancelButtonText}
@@ -172,7 +145,7 @@ const AppoitmentCard: FC<Props> = ({
           <CustomButton
             title={'Confirm'}
             onPress={() => {
-              handleStatusChange && handleStatusChange(item.id, 'approved');
+              handleStatusChange(item.id, 'approved');
             }}
             containerStyle={styles.confirmButton}
             textStyle={styles.confirmButtonText}
